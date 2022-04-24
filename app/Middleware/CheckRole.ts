@@ -12,11 +12,13 @@ export default class CheckRole {
       })
     }
     const role = await Role.findOrFail(user.roleId)
-
-    if (request.url().includes('admin')){
+    if (request.url().includes('admin-supervisor')){
+      if (!(role.name == 'Admin' || role.name == 'Supervisor')) return response.unauthorized()
+    }
+    else if (request.url().includes('admin')){
       if (!(role.name == 'Admin')) return response.unauthorized()
     }
-    if (request.url().includes('supervisor')){
+    else if (request.url().includes('supervisor')){
       if (!(role.name == 'Supervisor')) return response.unauthorized()
     }
 

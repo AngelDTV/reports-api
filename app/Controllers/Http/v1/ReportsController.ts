@@ -12,14 +12,15 @@ export default class ReportsController {
       type: data['type'],
       description: data['description'],
       points: data['points'],
+      appealed: false,
       userId: data['user_id']
     }
     try {
       const user = await User.findOrFail(data['user_id'])
       if (reportObj.type === 'demerit'){
-        user.points = user.points - reportObj.points
+        user.points = user.points - Number(reportObj.points)
       }else{
-        user.points = user.points + reportObj.points
+        user.points = user.points + Number(reportObj.points)
       }
       await user.save()
       await Report.create(reportObj)
@@ -34,21 +35,47 @@ export default class ReportsController {
 
   }
 
+  async getUserReports({params, response}){
+    const user = await User.findOrFail(params.id)
+    const reports = await Report.findByOrFail('userId', user.id)
+    return response.ok({
+      reports: reports
+    })
+  }
+
   async index ({params, response}){
-    if (params.id){
-      const user = await User.findOrFail(params.id)
-      const reports = await Report.findByOrFail('user_id', user.id)
-      return response.ok(reports)
-    }else{
-      const reports = await Report.all()
-      return response.ok(reports)
+      if (!params.id) {
+        const reports = await Report.all()
+        return response.ok({
+          reports: reports
+        })
+      }
+      const report = await Report.find(params.id)
+      return response.ok({
+        report: report
+      })
+  }
+
+  async UserReports({auth, response, params}){
+    if(params.id){
+      const report = await Report.findOrFail(params.id)
+      return response.ok({
+        report: report
+      })
+    }
+    const user = auth.user
+    try {
+      const reports = Report.findByOrFail('userId', user.id)
+      return response.ok({
+        reports: reports
+      })
+    } catch (error) {
+      return response.badRequest({
+        message: 'Reports not found'
+      })
     }
   }
 
-  async show ({params, response}){
-    const report = await Report.findOrFail(params.id)
-    return response.ok(report)
-  }
 
   async update ({params, request, response}){
     const data = request.only(['description', 'points'])

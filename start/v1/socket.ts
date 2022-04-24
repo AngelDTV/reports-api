@@ -6,11 +6,8 @@ Ws.boot()
  */
 Ws.io.on('connection', (socket) => {
   console.log('New connection from', socket.handshake.address)
-  socket.emit('news', { message: "login-request", userEmail: "aaa@gmail.com"})
+  //{ message: "login-request", userEmail: "aaa@gmail.com"}
 
-  socket.on('news', (data) => {
-    console.log(data)
-  })
 
   socket.on('login-attempt', async (data) => {
     if (data.message === "login-accepted"){
@@ -21,15 +18,13 @@ Ws.io.on('connection', (socket) => {
     }
   })
 
-  socket.on('my other event', (data) => {
-    console.log(data)
-  })
 })
 
 type AuthResponse = {
   token: string;
 };
 
+//Funcion para crear un token
 async function Auth(email) {
   try {
     // 👇️ const response: Response

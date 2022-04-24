@@ -1,18 +1,12 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Token from 'App/Models/Token'
 import Hash from '@ioc:Adonis/Core/Hash'
+import AuthController from 'App/Controllers/Http/v1/AuthController'
 
 export default class CheckToken {
   public async handle({request, response, auth}: HttpContextContract, next: () => Promise<void>) {
     // code for middleware goes here. ABOVE THE NEXT CALL
-
-    const token = request.input('token')
-    if (!token) {
-      return response.unauthorized({
-        message: 'Token is required',
-        status: false
-      })
-    }
+    const authController = new AuthController()
     const user = await auth.user
     if (!user) {
       return response.unauthorized({
@@ -20,6 +14,18 @@ export default class CheckToken {
         status: false
       })
     }
+    let role = await authController.getUserRole(user)
+    if (role === 'Admin') {
+      await next()
+    }
+    const token = request.input('token')
+    if (!token) {
+      return response.unauthorized({
+        message: 'Token is required',
+        status: false
+      })
+    }
+
     const tokenObj = await Token.query().where('user_id', user.id).where('status', 'active').first()
     if (!tokenObj) {
       return response.unauthorized({
