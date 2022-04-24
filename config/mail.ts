@@ -44,11 +44,11 @@ const mailConfig: MailConfig = {
     */
     smtp: {
       driver: 'smtp',
-      host: Env.get('SMTP_HOST'),
-      port: Env.get('SMTP_PORT'),
+      host: Env.get('SMTP_HOST') as string,
+      port: Env.get('SMTP_PORT') as string,
 			auth: {
-				user: Env.get('SMTP_USERNAME'),
-				pass: Env.get('SMTP_PASSWORD'),
+				user: Env.get('SMTP_USERNAME') as string,
+				pass: Env.get('SMTP_PASSWORD') as string,
 				type: 'login',
 			}
     },

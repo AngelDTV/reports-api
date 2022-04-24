@@ -23,17 +23,30 @@ export default class RolesController {
   }
 
   async assignRole({request, response}){
-    const data = request.only(['email', 'roleName'])
+    const data = request.only(['email', 'roleId'])
 
     try {
       let user = await User.findByOrFail('email', data['email'])
-      let role = await Role.findByOrFail('name', data['roleName'])
+      let role = await Role.findOrFail(data['roleId'])
       user.roleId = role.id
       await user.save()
       return response.created({
         message: 'Role assigned successfully'
       })
     }catch (error) {
+      return response.abort(400, {
+        message: error.message
+      })
+    }
+  }
+
+  async getRoles({response}){
+    try {
+      const roles = await Role.all()
+      return response.ok({
+        roles: roles
+      })
+    } catch (error) {
       return response.abort(400, {
         message: error.message
       })

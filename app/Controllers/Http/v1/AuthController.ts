@@ -1,5 +1,4 @@
 // import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import HttpContext from '@ioc:Adonis/Core/HttpContext'
 import Role from "App/Models/Role"
 import User from "App/Models/User"
 import Hash from '@ioc:Adonis/Core/Hash'
@@ -8,9 +7,7 @@ import View from "@ioc:Adonis/Core/View"
 import Mail from "@ioc:Adonis/Addons/Mail"
 
 export default class AuthController {
-
-  async register ({ request, response})
-  {
+  async register ({ request, response}){
     const data = request.only(['email', 'name', 'lastname', 'password'])
     let code = await this.generateOneTimeCode(100000, 999999)
     let role = await Role.findByOrFail('name', 'Collaborator')
@@ -166,7 +163,7 @@ export default class AuthController {
         message
           .from(Env.get('MAIL_FROM_ADDRESS') as string)
           .to(user.email)
-          .subject('Solicitud de cambio de contraseña')
+          .subject('One Time Code')
           .html(html)
       })
       return true
@@ -174,6 +171,7 @@ export default class AuthController {
       return false
     }
   }
+
 
   public async logout({auth, response}){
     try {
@@ -187,6 +185,29 @@ export default class AuthController {
       })
     }
   }
+
+  // async sendCode({request, response}){
+  //   const email = request.input('email')
+  //   try {
+  //     let newCode = await this.generateOneTimeCode(1000, 9999)
+
+  //     const html = await View.render('mails/one_time_code', {
+  //       code: newCode
+  //     })
+
+  //     await Mail.use('smtp').send((message) => {
+  //       message
+  //         .from(Env.get('MAIL_FROM_ADDRESS') as string)
+  //         .to(email)
+  //         .subject('One Time Code')
+  //         .html(html)
+  //     })
+  //     return true
+  //   } catch (error) {
+  //     console.log(error)
+  //     return false
+  //   }
+  // }
 
 
 }

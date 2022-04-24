@@ -7,7 +7,12 @@ Route.group(() => {
   Route.post('login-mobile', 'v1/AuthController.loginMobile')
   Route.post('token', 'v1/AuthController.loginWithApp')
   Route.post('login/code', 'v1/AuthController.loginWithOneTimeCode')
-  Route.post('logout', 'v1/AuthController.logout').middleware('auth')
-  Route.post('role', 'v1/RolesController.create')
+
+  Route.group(() => {
+    Route.post('logout', 'v1/AuthController.logout')
+    Route.post('role', 'v1/RolesController.create')
+  }).middleware('auth')
+
+  Route.post('send-code', 'v1/AuthController.sendCode')
 }).prefix('/api/v1/auth')
 
