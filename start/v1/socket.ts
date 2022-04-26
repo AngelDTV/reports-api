@@ -1,4 +1,4 @@
-import { Ioc } from '@adonisjs/core/build/standalone';
+
 import Ws from 'App/Services/Ws'
 import fetch from 'node-fetch';
 Ws.boot()
