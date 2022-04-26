@@ -1,3 +1,4 @@
+import { Ioc } from '@adonisjs/core/build/standalone';
 import Ws from 'App/Services/Ws'
 import fetch from 'node-fetch';
 Ws.boot()
@@ -7,14 +8,26 @@ Ws.boot()
 Ws.io.on('connection', (socket) => {
   console.log('New connection from', socket.handshake.address)
   //{ message: "login-request", userEmail: "aaa@gmail.com"}
-
+  socket.emit('ios-client', { message: 'Holiiii ios'});
+  socket.on('postman', (data) => {
+    console.log('postman', data)
+    socket.broadcast.emit('postman', data)
+  })
 
   socket.on('login-attempt', async (data) => {
-    if (data.message === "login-accepted"){
+    console.log(data)
+
+    if (data.message === 'login-request') {
+      await socket.broadcast.emit('ios-client', { message: 'login-request', userEmail: data.userEmail})
+      console.log('login-request')
+    }
+    else if (data.message === "login-accepted"){
       console.log(data.userEmail)
       const response = await Auth(data.userEmail)
       console.log(response?.token)
-      socket.emit('login-client', { message: "login-accepted", token: response?.token })
+      socket.broadcast.emit('login-client', { message: "login-accepted", token: response?.token['token'] })
+    }else{
+      console.log('error')
     }
   })
 
