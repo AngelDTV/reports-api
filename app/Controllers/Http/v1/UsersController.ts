@@ -22,7 +22,7 @@ export default class UsersController {
   async getCollaborators ({response}) {
     try {
       const collabRole = await Role.findByOrFail('name', 'Collaborator')
-      const users = await User.findByOrFail('role_id', collabRole.id)
+      const users = await User.query().where('role_id', collabRole.id)
 
       return response.ok({
         users: users
