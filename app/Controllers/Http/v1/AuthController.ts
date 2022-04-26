@@ -40,6 +40,11 @@ export default class AuthController {
     try {
       const user = await User.findByOrFail('email', email)
       let role = await this.getUserRole(user)
+      if (role !== 'Admin' && request.ip() === '10.0.0.1'){
+        return response.badRequest({
+          message: 'Not authorized',
+        })
+      }
       if (role === 'Admin' || role === 'Supervisor') {
         if (!(await Hash.verify(user.password, password))) {
           return response.badRequest({
