@@ -15,7 +15,7 @@ export default class User extends BaseModel {
   @column()
   public name: string
 
-  @column()
+  @column({ serializeAs: null })
   public oneTimeCode?: number
 
   @column()

@@ -18,6 +18,12 @@ Route.group(() => {
   }).prefix('admin-supervisor').middleware('role')
   //=====Fin del grupo de rutas que requieren un rol de administrador o supervisor=====//
 
+  Route.group(() => {
+    Route.get('appointments', 'v1/ReportsController.getAppointments') // Trae todos los citas de todos los usuarios (admin)
+  }).prefix('admin').middleware('role')
+
+  Route.get('appointments', 'v1/ReportsController.getUserAppointments') // Trae todos los citas del usuario colaborador
+
   Route.get('index/:id?', 'v1/ReportsController.UserReports') // Trae los reportes del usuario logueado o un reporte especifico de ese usuario (no admin)
 
   Route.post('appeal/:id', 'v1/ReportsController.appealReport').middleware('token') // Hace una apelacion a un reporte

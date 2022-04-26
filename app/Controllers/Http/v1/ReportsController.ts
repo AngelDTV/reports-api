@@ -130,4 +130,21 @@ export default class ReportsController {
     })
   }
 
+  async getUserAppointments({auth, response}){
+    const user = auth.user
+
+    const appointments = await Appoinment.findByOrFail('userId', user.id)
+
+    return response.ok({
+      appointments: appointments
+    })
+  }
+
+  async getAppointments({response}){
+    const appointments = await Appoinment.all()
+    return response.ok({
+      appointments: appointments
+    })
+  }
+
 }

@@ -1,5 +1,6 @@
 // import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
+import Role from "App/Models/Role";
 import User from "App/Models/User";
 
 export default class UsersController {
@@ -16,6 +17,21 @@ export default class UsersController {
     return response.ok({
       user: user
     })
+  }
+
+  async getCollaborators ({response}) {
+    try {
+      const collabRole = await Role.findByOrFail('name', 'Collaborator')
+      const users = await User.findByOrFail('role_id', collabRole.id)
+
+      return response.ok({
+        users: users
+      })
+    } catch (error) {
+      return response.badRequest({
+        message: "Error al obtener los colaboradores"
+      })
+    }
   }
 
 
