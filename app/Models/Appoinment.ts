@@ -8,7 +8,7 @@ export default class Appoinment extends BaseModel {
   @column()
   public userId: number
 
-  @column()
+  @column.dateTime()
   public date: DateTime
 
   @column.dateTime({ autoCreate: true })

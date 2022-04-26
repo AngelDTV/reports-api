@@ -116,19 +116,32 @@ export default class ReportsController {
     }
   }
 
-  async appealReport({ request, response}){
-    const data = request.only(['report_id'])
-    const report = await Report.findOrFail(data['report_id'])
-    report.appealed = true
-    await report.save()
-    const appoinment = await Appoinment.create({
-      userId: report.userId,
-      date: DateTime.local().plus({days: 1})
-    })
-    return response.ok({
-      message: 'Report appealed successfully',
-      appoinment_date: appoinment.date
-    })
+  async appealReport({ params, response}){
+    try {
+      const report = await Report.findOrFail(params.id)
+      if(report.appealed){
+        return response.badRequest({
+          message: 'Report already appealed'
+        })
+      }
+      report.appealed = true
+      await report.save()
+
+      const appoinment = await Appoinment.create({
+        userId: report.userId,
+        date: DateTime.local().plus({days: 1})
+      })
+
+      return response.ok({
+        message: 'Report appealed successfully',
+        appoinment_date: appoinment.date
+      })
+    } catch (error) {
+      response.badRequest({
+        message: error.message
+      })
+    }
+
   }
 
   async getUserAppointments({auth, response}){
