@@ -1,5 +1,6 @@
 import { Server } from 'socket.io'
 import AdonisServer from '@ioc:Adonis/Core/Server'
+import { corsList } from './cors'
 
 class Ws {
   public io: Server
@@ -14,7 +15,11 @@ class Ws {
     }
 
     this.booted = true
-    this.io = new Server(AdonisServer.instance!)
+    this.io = new Server(AdonisServer.instance!, {
+      cors: {
+        origin: corsList
+      }
+    });
   }
 }
 

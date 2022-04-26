@@ -6,3 +6,7 @@ Route.group(() => {
   Route.get('roles', 'v1/RolesController.getRoles') // Trae todos los roles
   Route.get('collaborators', 'v1/UsersController.getCollaborators') // Trae todos los colaboradores
 }).prefix('/api/v1/users/admin-supervisor').middleware(['auth', 'role'])
+
+Route.group(() => {
+  Route.get('profile', 'v1/UsersController.profile')
+}).prefix('/api/v1').middleware(['auth'])
