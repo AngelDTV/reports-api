@@ -15,12 +15,13 @@ export default class CheckToken {
       })
     }
     let role = await authController.getUserRole(user)
+
     if (role === 'Admin') {
-      await next()
+      return await next()
     }
     const token = request.input('token')
     if (!token) {
-      return response.unauthorized({
+      return response.methodNotAllowed({
         message: 'Token is required',
         status: false
       })
@@ -28,14 +29,14 @@ export default class CheckToken {
 
     const tokenObj = await Token.query().where('user_id', user.id).where('status', 'active').first()
     if (!tokenObj) {
-      return response.unauthorized({
+      return response.methodNotAllowed({
         message: 'Token is not valid',
         status: false
       })
     }
 
     if (!(await Hash.verify(tokenObj.payload, token))) {
-      return response.unauthorized({
+      return response.methodNotAllowed({
         message: 'Token is invalid',
         status: false
       })

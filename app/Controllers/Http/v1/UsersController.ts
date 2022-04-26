@@ -18,5 +18,9 @@ export default class UsersController {
     })
   }
 
+  async profile ({ auth, response}) {
+    const user = auth.user
+    return response.ok(user)
+  }
 
 }

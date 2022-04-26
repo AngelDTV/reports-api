@@ -65,7 +65,8 @@ export default class ReportsController {
     }
     const user = auth.user
     try {
-      const reports = Report.findByOrFail('userId', user.id)
+      const reports = await user.related('reports').query()
+
       return response.ok({
         reports: reports
       })
