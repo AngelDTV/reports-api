@@ -14,5 +14,8 @@ Route.group(() => {
   }).middleware('auth')
 
   Route.post('send-code', 'v1/AuthController.sendCode') // Test para enviar correo
+  //Route.post('get-ip', 'v1/AuthController.getIp') // Test para enviar ip
 }).prefix('/api/v1/auth')
+
+
 
